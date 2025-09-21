@@ -10,14 +10,29 @@ def load_data(file_path: str):
 
 def main() -> None:
     animals_data = load_data('animals_data.json')
+
+    try:
+        with open('animals_template.html', 'r') as file_obj:
+            html_content = file_obj.read()
+    except FileNotFoundError:
+        print("File animals_template.html doesn't exist!")
+
+    output = ""
     for animal in animals_data:
-        print(f"Name: {animal['name']}")
-        print(f"Diet: {animal['characteristics']['diet']}")
-        print(f"Location: {animal['locations'][0]}")
+        output += f"Name: {animal['name']}\n"
+        output += f"Diet: {animal['characteristics']['diet']}\n"
+        output += f"Location: {animal['locations'][0]}\n"
 
         if 'type' in animal['characteristics']:
-            print(f"Type: {animal['characteristics']['type']}")
-        print()
+            output += f"Type: {animal['characteristics']['type']}\n"
+        output += "\n"
+
+    if html_content:
+        html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
+        with open('animals.html', 'w') as file_obj:
+            file_obj.write(html_content)
+
+    print(output, end="")
 
 
 if __name__ == '__main__':
