@@ -14,14 +14,16 @@ def load_data(file_path: str):
 
 def serialize_animal(animal_obj) -> str:
     output = ''
-    name, diet, location = (animal_obj['name'],
+    name, diet, locations, lifespan = (animal_obj['name'],
                             animal_obj['characteristics']['diet'],
-                            animal_obj['locations'][0])
+                            animal_obj['locations'],
+                            animal_obj['characteristics']['lifespan'])
     output += '<li class="cards__item">'
     output += f'<div class="card__title">{name}</div>\n'
     output += '<p class="card__text">'
     output += f"<strong>Diet:</strong> {diet}<br />\n"
-    output += f"<strong>Location:</strong> {location}<br />\n"
+    output += f"<strong>Location:</strong> {", ".join(locations)}<br />\n"
+    output += f"<strong>Life span:</strong> {lifespan}<br />\n"
 
     if 'type' in animal_obj['characteristics']:
         animal_type = animal_obj['characteristics']['type']
