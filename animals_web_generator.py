@@ -20,15 +20,15 @@ def serialize_animal(animal_obj) -> str:
                             animal_obj['characteristics']['lifespan'])
     output += '<li class="cards__item">'
     output += f'<div class="card__title">{name}</div>\n'
-    output += '<p class="card__text">'
-    output += f"<strong>Diet:</strong> {diet}<br />\n"
-    output += f"<strong>Location:</strong> {", ".join(locations)}<br />\n"
-    output += f"<strong>Life span:</strong> {lifespan}<br />\n"
+    output += '<div class="card__text"><ul>'
+    output += f"<li><strong>Diet:</strong> {diet}</li>\n"
+    output += f"<li><strong>Location:</strong> {", ".join(locations)}</li>\n"
+    output += f"<li><strong>Life span:</strong> {lifespan}</li>\n"
 
     if 'type' in animal_obj['characteristics']:
         animal_type = animal_obj['characteristics']['type']
-        output += f"<strong>Type:</strong> {animal_type}\n"
-    output += "</p></li>\n"
+        output += f"<li><strong>Type:</strong> {animal_type}</li>\n"
+    output += "</ul></div></li>\n"
 
     return output
 
