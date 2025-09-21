@@ -1,3 +1,4 @@
+from typing import Any
 import json
 
 def load_data(file_path: str):
@@ -12,25 +13,34 @@ def load_data(file_path: str):
         print(f"File {file_path} doesn't exist!")
 
 
-def serialize_animal(animal_obj) -> str:
+def serialize_animal(animal_obj: dict[str, Any]) -> str:
     output = ''
-    name, diet, locations, lifespan = (animal_obj['name'],
-                            animal_obj['characteristics']['diet'],
-                            animal_obj['locations'],
-                            animal_obj['characteristics']['lifespan'])
-    output += '<li class="cards__item">'
-    output += f'<div class="card__title">{name}</div>\n'
-    output += '<div class="card__text"><ul>'
-    output += f"<li><strong>Diet:</strong> {diet}</li>\n"
-    output += f"<li><strong>Location:</strong> {", ".join(locations)}</li>\n"
-    output += f"<li><strong>Life span:</strong> {lifespan}</li>\n"
+    try:
+        name, locations = animal_obj['name'], animal_obj['locations']
+        diet, lifespan, skin_type = (animal_obj['characteristics'].get('diet', 'N/A'),
+                                     animal_obj['characteristics'].get('lifespan', 'N/A'),
+                                     animal_obj['characteristics'].get('skin_type', 'N/A'))
+    except KeyError:
+        print("Fatal error occurred, unable to serialize animal!")
+    else:
+        lifespan = lifespan.replace('–', '-')
 
-    if 'type' in animal_obj['characteristics']:
-        animal_type = animal_obj['characteristics']['type']
-        output += f"<li><strong>Type:</strong> {animal_type}</li>\n"
-    output += "</ul></div></li>\n"
+        output += '<li class="cards__item">'
+        output += f'<div class="card__title">{name}</div>\n'
+        output += '<div class="card__text"><ul>'
+        output += f"<li><strong>Diet:</strong> {diet}</li>\n"
+        output += f"<li><strong>Location:</strong> {", ".join(locations)}</li>\n"
+        output += f"<li><strong>Life span:</strong> {lifespan}</li>\n"
+        output += f"<li><strong>Skin type:</strong> {skin_type}</li>\n"
 
-    return output
+        if 'type' in animal_obj['characteristics']:
+            animal_type = animal_obj['characteristics']['type']
+            output += f"<li><strong>Type:</strong> {animal_type}</li>\n"
+        output += "</ul></div></li>\n"
+
+        return output
+
+    return ""
 
 
 def main() -> None:
