@@ -1,5 +1,7 @@
 from typing import Any
 import json
+import sys
+
 
 def load_data(file_path: str) -> Any | str | None:
     """
@@ -25,7 +27,8 @@ def load_data(file_path: str) -> Any | str | None:
             else:
                 return file_obj.read()
     except FileNotFoundError:
-        print(f"File {file_path} doesn't exist!")
+        print(f"File {file_path} doesn't exist! Exiting App...")
+        sys.exit(0)
 
 
 def serialize_animal(animal_obj: dict[str, Any]) -> str | None:
@@ -131,6 +134,18 @@ def filter_by_skin_type(
     return False
 
 
+def get_valid_filter(prompt: str, valid_inputs: list[str]) -> str:
+    while True:
+        user_choice = input(f"{prompt} ").lower()
+        valid_inputs_lower = [input_str.lower() for input_str in valid_inputs]
+
+        if user_choice in valid_inputs_lower or user_choice == "":
+            return user_choice
+        else:
+            print("Invalid selection! Please select an available skin type:")
+            print(", ".join(valid_inputs), "\n")
+
+
 def main() -> None:
     """
     Generate the animals HTML page with optional skin-type filtering.
@@ -148,8 +163,11 @@ def main() -> None:
     skin_types = sorted(get_unique_skin_types(animals_data))
     print(f"Available skin types: {", ".join(skin_types)}\n")
 
-    user_choice = input(
-        "Please choose a skin type (leave blank for no filter): ")
+    user_choice = get_valid_filter(
+        "Please choose a skin type (leave blank for no filter):",
+        skin_types
+    )
+
     filtered_animals = filter(
         lambda animal_obj: filter_by_skin_type(animal_obj, user_choice),
         animals_data
@@ -157,7 +175,9 @@ def main() -> None:
 
     output = ""
     for animal_obj in filtered_animals:
-        output += serialize_animal(animal_obj)
+        serialized = serialize_animal(animal_obj)
+        if serialized:
+            output += serialized
 
     if html_content:
         html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
